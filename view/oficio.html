@@ -1,0 +1,66 @@
+<div class="panel panel-info ui-oficio">
+  <div class="panel-heading" >
+    <h3 class="panel-title">
+        <div class="media">
+            <div class="media-body">
+                <b>{{numero}}/{{ano}} ({{data | date:'dd/MM/yyyy'}})</b><br /> 
+                <u>Destino:</u> {{destino}}<br />
+                <u>Assunto:</u> {{assunto}}<br />
+                <u>Remetente:</u> {{autor}}
+            </div>
+            <div class="media-right  media-middle" >
+                <button class="btn btn-warning btn-block" ng-click="editOficio({'numero':numero})">
+                    <i class="glyphicon glyphicon-pencil "></i>
+                </button>   
+            </div>                      
+        </div>
+    </h3>
+  </div>
+
+    <div  class="panel-body" ng-show="isEditing">                             
+        <form name="form.oficioForm" id="form.oficioForm">
+            <br />                                 
+            <label for='assunto'>Assunto:</label>
+            <input type="text" ng-model="oficio.ofiAssunto" class="form-control" ng-required="true" ng-minlength="5" name="assunto" 
+            placeholder="Por favor, digite o assunto do oficio!"/>
+            <div ng-show="form.oficioForm.assunto.$error.required && form.oficioForm.assunto.$dirty" class="alert alert-danger">
+                Por favor, digite o assunto do oficio!
+            </div>
+            <div ng-show="form.oficioForm.assunto.$error.minlength" class="alert alert-danger">
+                Campo "assunto" deve ter no mínimo 5 caracteres.
+            </div>  
+
+            <label for='destino'>Destino:</label>
+            <input type="text" ng-model="oficio.ofiDestino" class="form-control" ng-required="true" ng-minlength="3" name="destino" 
+            placeholder="Por favor, digite o destino do oficio!"/>
+            <div ng-show="form.oficioForm.destino.$error.required && form.oficioForm.destino.$dirty" class="alert alert-danger">
+                Por favor, digite o destino do oficio!
+            </div>
+            <div ng-show="form.oficioForm.destino.$error.minlength" class="alert alert-danger">
+                Campo "assunto" deve ter no mínimo 3 caracteres.
+            </div>  
+
+            <label for='dataOficio'>Data:</label>
+            <input type="text" ng-model="oficio.ofiData" class="form-control" ng-required="true" ng-minlength="10" name="dataOficio" 
+            placeholder="Digite a data..." ui-date />
+            <div ng-show="form.oficioForm.dataOficio.$error.required && form.oficioForm.dataOficio.$dirty" class="alert alert-danger">
+                Digite a data...
+            </div>
+            <div ng-show="form.oficioForm.dataOficio.$error.minlength" class="alert alert-danger">
+                A data deve estar no formato dd/mm/aaaa.
+            </div>   
+
+            <label for='usuario'>Usuário:</label>
+            <input type="text" ng-model="oficio.usuario" class="form-control" ng-required="true" name="usuario" disabled/>
+            <div ng-show="form.oficioForm.usuario.$error.required && form.oficioForm.usuario.$dirty" class="alert alert-danger">
+                É preciso estar logado para cadastrar ofícios.
+            </div>
+
+            <br />                                             
+            <button class="btn btn-success btn-block" ng-click="editarOficio(oficio)" ng-disabled="form.oficioForm.$invalid">
+                    <span class="glyphicon glyphicon-file"></span> Alterar oficio
+            </button>                  
+            <br>
+        </form>     
+    </div>
+</div>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html ng-app="oficio">
+<head>
+    <meta charset="UTF-8" />
+    <title>Controle Interno de Emissão de Ofícios - ASP ({{ano}})</title>
+    <script src="lib/angular.js"></script>
+    <script src="lib/angular-animate.js"></script>
+	<script src="lib/angular-locale_pt-br.js"></script>    
+    <script src="js/oficio.js"></script>    
+    <script src="js/uiOficio.js"></script>         
+    <script src="js/uiDateDirective.js"></script>        
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap.css">
+</head>
+<body ng-controller="oficioCtrl">
+    <div class="container">           
+        <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2" ng-if="usuario.nome == null">                    
+            <div class="panel panel-info" >
+                <div class="panel-heading">
+                    <div class="panel-title">Entre com a sua senha</div>
+                    <div style="float:right; font-size: 80%; position: relative; top:-10px"><a href="http://www.asp.uem.br">Voltar para a página da ASP</a></div>
+                </div>     
+                <div style="padding-top:30px" class="panel-body" >                   
+                    <form id="loginform" name="loginform" class="form-horizontal" role="form">                                                   
+                        <div style="margin-bottom: 25px" class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input id="username" type="text" class="form-control" ng-required="true"
+                                   name="username" value="" placeholder="usuario da UEM" ng-model="login" >                                        
+                        </div>                           
+                        <div style="margin-bottom: 25px" class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input id="password" type="password" class="form-control" ng-required="true"
+                                   name="password" placeholder="senha" ng-model="senha" >
+                        </div>
+                        <div id="login-alert" class="alert alert-danger col-sm-12"
+                                ng-show="loginform.password.$error.required && loginform.password.$dirty || loginform.username.$error.required && loginform.username.$dirty">
+                            Digite o seu usuário e senha.    
+                        </div>        
+                        <div id="senha-alert" class="alert alert-danger col-sm-12"
+                                ng-show="usuario.error">
+                            Login ou senha inválidos! Tente novamente
+                        </div>                                                   
+                        <div style="margin-top:10px" class="form-group">
+                            <!-- Button -->
+                            <div class="col-sm-12 controls">
+                                <button type="button" id="btn-login" class="btn btn-success" aria-label="Left Align" 
+                                        ng-disabled="loginform.$invalid" ng-click="getUsuario(login, senha);">
+                                <span>Entrar</span>
+                                </button>                                
+                            </div>
+                        </div>
+                    </form>     
+                    </div>                     
+                </div>  
+            </div>
+        </div>       
+        <div ng-if="usuario" class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            <h3 class='txt-cntrl'><center>Controle Interno de Numeração de Ofícios - ASP ({{ano}})</center></h3>   
+            <div class="btn-group btn-group-justified" role="group" aria-label="Ano">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="getOficios()">2017</button>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="getOficios2016()">2016</button>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="getOficios2015()">2015</button>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="getOficios2014()">2014</button>
+                </div>                
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="getOficios2013()">2013</button>
+                </div>                
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="getOficios2012()">2012</button>
+                </div>                
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="getOficios2011()">2011</button>
+                </div>                
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="getOficios2010()">2010</button>
+                </div>                
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default" ng-click="getOficios2009()">2009</button>
+                </div>                
+            </div>             
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class='txt-cntrl'><a href="" ng-click="ordenarPor('ofi_numero')">Número</a></th>
+                        <th class='txt-cntrl'><a href="" ng-click="ordenarPor('ofi_data')">Data</a></th>
+                        <th class='txt-cntrl'><a href="" ng-click="ordenarPor('ofi_destino')">Destino</a></th>
+                        <th class='txt-cntrl'><a href="" ng-click="ordenarPor('ofiAssunto')">Assunto</a></th>                        
+                        <th class='txt-cntrl'><a href="" ng-click="ordenarPor('ofi_autor')">Autor</a></th>                                                
+                        <th class='txt-cntrl'></th>                                
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div>
+                <label>Procurar ofício <span class="glyphicon glyphicon-search"></span>: 
+                    <input ng-model="searchText" placeholder="Digite aqui o argumento de busca..." size="38" >
+                </label>
+            </div>    
+
+            <button class="btn btn-primary btn-block" ng-click="ativarCadastro()">
+                <span class="glyphicon glyphicon-file"></span> {{cadastrador.status ? cadastrador.ativo : cadastrador.inativo}}
+            </button>          
+            <form name="form.oficioForm" id="form.oficioForm" ng-show="cadastrador.status">
+                <br />                                 
+                <label for='assunto'>Assunto:</label>
+                <input type="text" ng-model="oficio.ofiAssunto" class="form-control" ng-required="true" ng-minlength="5" name="assunto" 
+                placeholder="Por favor, digite o assunto do oficio!"/>
+                <div ng-show="form.oficioForm.assunto.$error.required && form.oficioForm.assunto.$dirty" class="alert alert-danger">
+                    Por favor, digite o assunto do oficio!
+                </div>
+                <div ng-show="form.oficioForm.assunto.$error.minlength" class="alert alert-danger">
+                    Campo "assunto" deve ter no mínimo 5 caracteres.
+                </div>  
+
+                <label for='destino'>Destino:</label>
+                <input type="text" ng-model="oficio.ofiDestino" class="form-control" ng-required="true" ng-minlength="3" name="destino" 
+                placeholder="Por favor, digite o destino do oficio!"/>
+                <div ng-show="form.oficioForm.destino.$error.required && form.oficioForm.destino.$dirty" class="alert alert-danger">
+                    Por favor, digite o destino do oficio!
+                </div>
+                <div ng-show="form.oficioForm.destino.$error.minlength" class="alert alert-danger">
+                    Campo "assunto" deve ter no mínimo 3 caracteres.
+                </div>  
+
+                <label for='dataOficio'>Data:</label>
+                <input type="text" ng-model="oficio.ofiData" class="form-control" ng-required="true" ng-minlength="10" name="dataOficio" 
+                placeholder="Digite a data..." ui-date />
+                <div ng-show="form.oficioForm.dataOficio.$error.required && form.oficioForm.dataOficio.$dirty" class="alert alert-danger">
+                    Digite a data...
+                </div>
+                <div ng-show="form.oficioForm.dataOficio.$error.minlength" class="alert alert-danger">
+                    A data deve estar no formato dd/mm/aaaa.
+                </div>   
+
+                <label for='usuario'>Usuário:</label>
+                <input type="text" ng-model="oficio.usuario" class="form-control" ng-required="true" name="usuario" disabled/>
+                <div ng-show="form.oficioForm.usuario.$error.required && form.oficioForm.usuario.$dirty" class="alert alert-danger">
+                    É preciso estar logado para cadastrar ofícios.
+                </div>
+
+                <br />                                             
+                <button class="btn btn-success btn-block" ng-click="cadastrarOficio(oficio)" ng-disabled="form.oficioForm.$invalid">
+                        <span class="glyphicon glyphicon-file"></span> Cadastrar oficio
+                </button>                  
+                <br>
+            </form>  
+
+            <ui-oficios>
+                <ui-oficio ng-repeat="oficio in oficios  | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao | filter:searchText " 
+                    numero="{{oficio.ofi_numero}}"
+                    ano="{{oficio.ofi_ano}}"                    
+                    data="{{oficio.ofi_data | date:'dd/MM/yyyy'}}"
+                    assunto="{{oficio.ofi_assunto}}"
+                    destino="{{oficio.ofi_destino}}"
+                    autor="{{oficio.ofi_autor}}"
+                >
+                </ui-oficio>                       
+            </ui-oficios>   
+
+        </div>        
+    </div>
+</body>    
+</html>
